@@ -1,0 +1,219 @@
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 06 86 50 00 09 31 03 01 00 1A 21 02 00 4E E5 E4
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 06 F3 B0 00 09 31 03 01 00 1A 21 02 00 4E 2E D5
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 07 2A 60 00 09 31 03 01 00 1A 21 02 00 4E 09 35
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 01 11 D4 00 00 C7 7D
+
+
+Get Request cmd:
+获取featurid 01 02 03 的值
+A5 50 02 11 22 33 44 55 00 00 00 01 00 03 01 02 03 CA DD
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 00 00 C9 00 09 01 01 00 02 01 00 03 01 2D C4 71
+
+获取所有feature 的值
+A5 50 02 11 22 33 44 55 00 00 00 01 00 00 D6 58
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 00 00 C9 00 2B 
+01 01 00 ,
+02 01 00 , 
+04 01 28 ,
+0B 01 68 ,
+05 01 01 ,
+06 02 03 E8 
+20 01 00 ,
+03 01 2D ,
+07 01 00 ,
+08 01 00 ,
+31 03 01 00 1B,
+21 02 00 50,
+0E 01 00 
+7F 68
+
+
+5A 51 01 99 58 47 92 12 14 EB 77 00 00 01 F5 00 3D 
+01 01 00 
+02 01 00 
+04 01 28 
+0B 01 68 
+05 01 01 
+06 02 03 E8 
+20 01 00 
+03 01 2D 
+07 01 00 
+08 01 00 
+31 03 01 00 1B 
+21 02 00 50 
+0E 01 00 
+31 03 01 00 1B 
+21 02 00 50 
+01 01 00
+02 01 00 
+04 01 28 
+5D FC
+
+
+unsigned char 	connction_status;	 	   				  		// fun id 100                feature id   0x00
+unsigned char 	power_switch; 			   			    		// 开关fun id 108            feature id   0x01
+unsigned char 	celsius_temp_setting;   			  		// 摄氏温度设置 fun id 2     feature id   0x04 
+unsigned char 	temp_scale_switching;   			 		  // 温标切换111        			 feature id   0x05
+unsigned char 	fahrenheit_temperature_setting; 			// 华氏温度设置 111          feature id   0x0b
+signed   short	real_time_display_fahrenheit_temp;			// 华氏温度实时显示137    	 feature id   0x21
+unsigned char   lock_screen;                    			// 锁屏 7										 feature id   0x22,
+unsigned char   water_pump_flow_switch;						// 水泵水流开关信号 101			 feature id   0x23,
+unsigned short  water_flow_rate;							// 水流量	106								 				   feature id   0x24,
+unsigned char   touch_screen_button_sound;					// 点击触摸屏幕时是否需要声音选项 110  feature id   0x25,
+unsigned char   ozone_valve_opening_time;					// 臭氧阀开启时间	112				 feature id   0x26,
+unsigned char   auto_turn_on_after_powerOn;					// 上电开机	116							 feature id   0x27
+unsigned char   vacuum_pump_water_flow_switch;     //真空泵水流开关信号	129 	 feature id   0x28,
+signed short	real_display_of_celsius_temp; 			// 摄氏温度实时显示 114  	   feature id   0x31
+
+
+	Connect_Status_ID  =0x00, 
+	Power_Switch_ID =0x01,
+	Celsius_Temperature_Setting_ID=0x04, //0x04
+	Temperature_Scale_Switching_ID=0x05, //0x05
+	Fahrenheit_Temperature_Setting_ID=0x0B,  //0X0B Fahrenheit temperature set
+	Lock_Screen_ID=0x22,
+	Touch_Screen_Button_Sound_ID=0x25,
+	Ozone_valve_opening_time_ID=0x26,
+    Auto_Turn_on_After_PowerOn_ID=0x27
+	
+	Real_Display_Of_Fahrenheit_Temp_ID=0x21,
+	Water_Pump_Flow_Switch_ID=0x23,
+	Water_Flow_Rate_ID=0x24,
+	Vacuum_Pump_Water_Flow_Switch_ID=0x28,
+    Real_Display_Of_Celsius_Temp_ID=0x31,
+	
+	
+	
+	
+#define QUEUE_SIZE 5
+int queue[QUEUE_SIZE];
+int front = 0;
+int rear = 0;
+int count = 0;
+ 
+void enqueue(int data) {
+    if (count >= QUEUE_SIZE) {
+        // 队列已满，需要移动读指针
+        front = (front + 1) % QUEUE_SIZE;
+        count--; // 需要先减少计数，因为要覆盖一个数据
+    }
+    queue[rear] = data;
+    rear = (rear + 1) % QUEUE_SIZE;
+    count++;
+}
+ 
+int dequeue() {
+    if (count == 0) {
+        // 队列为空
+        printf("Queue is empty\n");
+        exit(1);
+    }
+    int data = queue[front];
+    front = (front + 1) % QUEUE_SIZE;
+    count--;
+    return data;
+}
+ 
+int main() {
+    // 写入数据，直到写入位置与读取位置重合
+    for (int i = 0; i < QUEUE_SIZE * 2; ++i) {
+        enqueue(i);
+    }
+ 
+    // 移动读取指针，并继续出队操作
+    while (count > 0) {
+        int data = dequeue();
+        printf("Dequeued: %d\n", data);
+    }
+ 
+    return 0;
+}
+   
+uint8_t  power_status[LOGGING_MAX_RING_BUF_LENGTH] ;
+uint8_t	 heat_status[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t	 heat_time_set[LOGGING_MAX_RING_BUF_LENGTH] ;
+uint8_t  celsius_temp_set[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t  fahrenheit_temp_set[LOGGING_MAX_RING_BUF_LENGTH];	
+uint8_t  temp_scale_switch[LOGGING_MAX_RING_BUF_LENGTH];
+uint16_t  plan_heat_time_set[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t  internal_read_light_switch[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t  external_read_light_switch[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t	led_ambient_light_adjustment[LOGGING_MAX_RING_BUF_LENGTH][12]; 	  //Light_Color_ID
+uint8_t  color_light_switch[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t  heat_reservation_switch[LOGGING_MAX_RING_BUF_LENGTH];
+uint16_t fahrenheit_temp_display[LOGGING_MAX_RING_BUF_LENGTH];
+uint8_t  celsius_temp_display[LOGGING_MAX_RING_BUF_LENGTH];   
+
+
+# Enable MCUmgr and dependencies.
+CONFIG_NET_BUF=y
+CONFIG_ZCBOR=y
+CONFIG_CRC=y
+CONFIG_MCUMGR=y
+CONFIG_STREAM_FLASH=y
+CONFIG_FLASH_MAP=y
+
+# Some command handlers require a large stack.
+CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE=2304
+CONFIG_MAIN_STACK_SIZE=2176
+
+# Ensure an MCUboot-compatible binary is generated.
+CONFIG_BOOTLOADER_MCUBOOT=y
+
+# Enable flash operations.
+CONFIG_FLASH=y
+
+# Required by the `taskstat` command.
+#CONFIG_THREAD_MONITOR=y
+
+# Support for taskstat command
+CONFIG_MCUMGR_GRP_OS_TASKSTAT=y
+
+
+
+# Enable most core commands.
+CONFIG_FLASH=y
+CONFIG_IMG_MANAGER=y
+CONFIG_MCUMGR_GRP_IMG=y
+CONFIG_MCUMGR_GRP_OS=y
+CONFIG_MCUMGR_GRP_STAT=y
+
+
+# Enable MCUmgr and dependencies.
+CONFIG_NET_BUF=y
+CONFIG_ZCBOR=y
+CONFIG_CRC=y
+CONFIG_MCUMGR=y
+CONFIG_STREAM_FLASH=y
+CONFIG_FLASH_MAP=y
+
+# Some command handlers require a large stack.
+CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE=2304
+CONFIG_MAIN_STACK_SIZE=2176
+
+# Ensure an MCUboot-compatible binary is generated.
+CONFIG_BOOTLOADER_MCUBOOT=y
+
+# Enable flash operations.
+CONFIG_FLASH=y
+
+# Required by the `taskstat` command.
+#CONFIG_THREAD_MONITOR=y
+
+# Support for taskstat command
+CONFIG_MCUMGR_GRP_OS_TASKSTAT=y
+
+
+
+# Enable most core commands.
+CONFIG_FLASH=y
+CONFIG_IMG_MANAGER=y
+CONFIG_MCUMGR_GRP_IMG=y
+CONFIG_MCUMGR_GRP_OS=y
+CONFIG_MCUMGR_GRP_STAT=y

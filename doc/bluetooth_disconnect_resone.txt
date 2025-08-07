@@ -1,0 +1,43 @@
+android ble status,Android BLE peripheral disconnects with status code BLE_HCI_INSTANT_PASSED(0x28)
+问题
+
+My application is able to connect to the BLE peripheral(which is an OBDII/J1939 device) device successfully.
+
+2018-01-24 14:58:38,413 INFO LogUtil - GATT Server Status = (0) : BLE_HCI_STATUS_CODE_SUCCESS(0x00)
+
+2018-01-24 14:58:38,414 INFO LogUtil - GATT Server New State = (2) : STATE_CONNECTED
+
+2018-01-24 14:58:38,414 INFO LogUtil - Connected to GATT server.
+
+Application started communication with the device but after some time it received GATT server disconnection message in onConnectionStateChange in callback implementation of BluetoothGattCallback . Below are the logs from application:
+
+2018-01-24 15:07:46,396 INFO LogUtil - GATT Server Status = (40) : BLE_HCI_INSTANT_PASSED(0x28)
+
+2018-01-24 15:07:46,397 INFO LogUtil - GATT Server New State = (0) : STATE_DISCONNECTED
+
+2018-01-24 15:07:46,398 INFO LogUtil - Disconnected from GATT server.
+
+Not able to find any reason behind BLE_HCI_INSTANT_PASSED status code.
+
+Any help on this will be helpful.
+
+回答1:
+
+When data is being transmitted over BLE, data transfers can only start at sync points in time known as "connection events". At the BLE link layer there are couple special requests that can be made which are relative to these sync points. They are:
+当数据通过BLE传输时，数据传输只能在称为“连接事件”的同步时间点开始。在BLE链路层，可以提出几个与这些同步点相关的特殊请求。他们是：
+
+LL_CHANNEL_MAP_REQ - A request to change the BLE channels being transmitted on. Bluetooth chips will change the channel map based on the noise in the environment to try to limit packet drop.
+LL_CHANNEL_MAP_REQ-更改正在传输的BLE信道的请求。蓝牙芯片将根据环境中的噪声更改信道映射，以尝试限制丢包。
+
+LL_CONNECTION_UPDATE_REQ - A request to change the frequency of "connection events" (known as the "connection interval"). This is done to achieve better throughput/latency or save more power.
+LL_CONNECION_UPDATE_REQ-更改“连接事件”频率（称为“连接间隔”）的请求。这样做是为了实现更好的吞吐量/延迟或节省更多电力。
+
+Each of these Link Layer requests when sent over the air contains an "Instant" to change. The "Instant" is the "connection event" in the future to apply the change.
+这些链路层请求中的每一个在通过空中发送时都包含一个“即时”更改。“即时”是未来应用更改的“连接事件”。
+
+At the Link Layer, BLE is reliable. This means each Link Layer packet must be ack'd by the other side. In a noisy RF environment, it's possible a link layer packet may require a couple retries to actually send. This means the packet could arrive many "connection events" after originally intended.
+在链路层，BLE是可靠的。这意味着每个链路层数据包都必须由另一方打包。在嘈杂的射频环境中，链路层数据包可能需要几次重试才能实际发送。这意味着数据包可能会在最初预期的时间之后到达许多“连接事件”。
+If one of the packets mentioned above is received after the "Instant" the changes were supposed to be applied, by definition the BLE chip must disconnect with reason 0x28 (Instant Passed)
+如果在“即时”之后收到上述数据包之一，则应应用更改，根据定义，BLE芯片必须断开连接，原因为0x28（即时通过）
+For additional details on the topic, the Bluetooth Core Specification available from the Bluetooth SIG website is a good reference:
+有关此主题的更多详细信息，蓝牙SIG网站上提供的蓝牙核心规范是一个很好的参考

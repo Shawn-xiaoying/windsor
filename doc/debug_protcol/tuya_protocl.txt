@@ -1,0 +1,2 @@
+55 aa 00 00 00 00 ff   heart check
+55 aa 00 01 00 00 00   query  product information 
