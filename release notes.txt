@@ -1,0 +1,48 @@
+
+2024/12/3
+1.   针对桑拿控制器控制，增加了logging 功能，并修改版本号为v1.11
+2.   去掉CONFIG_GPIO_AS_PINRESET宏，取消 p0.18的复位功能，并将P0.18设置为输出
+3.   取消掉Bootload  的 CONFIG_GPIO_AS_PINRESET宏
+1. Added logging function and modified version number to v1.11 for sauna controller control
+2. Remove the VNet GPIO-AS-PINRESET macro, disable the reset function of p0.18, and set P0.18 as the output
+3. Cancel the VNet GPIO-AS-PINRESET macro of Bootload
+
+2024/12/25
+1.   在\project\dfu\secure_bootloader 目录中增加了 pca10056_s140_ble 针对nrf52840芯片的bootloader项目并编译，以此来替换以前pca10100_s140_ble目录针对nrf52833的 bootloader项目
+1. Added pca10056us140-ble bootloader project for nrf52840 chip in the \ project \ dfu \ secure_bootloader directory and compiled it, replacing the previous pca10100us140-ble bootloader project for nrf52833 in the directory
+2024/12/31
+修改了广播数据格式，增加了feature id 0xff 设置device code 写入flash 功能 
+Modified the broadcast data format and added feature ID 0xff to set device code and write flash function
+
+2025/1/3
+修改了广播数据格式，增加了device state,使用了蓝牙多设备连接方式
+Modified the broadcast data format and added device state，Used Bluetooth multi device connection method.
+
+2025/1/8
+蓝牙绑定功能使用了宏定义来进行选择，固件版本号为v2.0.0
+The Bluetooth binding function uses macro definitions for selection, with firmware version number v2.0.0
+
+2025/1/9
+绑定功能取消，使用单设备，使用Device_code , Device state 使用宏定义 ，修改版本号为v2.0.1
+Cancel binding function, use single device, use Device_comde, Device state is defined using macros, with version number changed to v2.0.1
+
+2025/1/10
+修改HBOT和冷水浴缸固件版本为2.0.0，桑拿固件版本为2.0.1
+Modify the firmware version of HBOT and cold water bathtub to 2.0.0, and the firmware version of sauna to 2.0.1
+
+2025/1/13
+开始编写代码实现session的通讯协议
+Start writing code to implement the communication protocol for the session
+
+2025/7/14
+1.解决高压氧舱在session运行过程中，蓝牙连接断开后再连接上，读取到的session状态不对的bug 
+2.修改高压氧舱在使用set命令启动压缩机，制氧机后，运行其他命令没有应答的bug 
+3.修改高压氧舱版本号为v4.1.1
+1. Solve the bug where the session status of the hyperbaric oxygen chamber is read incorrectly when the Bluetooth connection is disconnected and reconnected during session operation
+2. Modify the bug where the high-pressure oxygen chamber fails to respond to other commands after starting the compressor and oxygen generator using the set command
+3. Modify the version number of the hyperbaric oxygen chamber to v4.1.1
+
+
+2025/8/4
+1.针对高压氧舱，使用状态机对app set 命令和 session 命令的控制进行了单独的管理，
+2.高压氧舱版本号更新为v4.2.0

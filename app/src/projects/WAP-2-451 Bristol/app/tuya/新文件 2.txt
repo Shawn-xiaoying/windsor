@@ -1,0 +1,10 @@
+1. 桑拿房控制系统上传功能点协议编码 (完成)
+2. 将tuya 协议数据上传接收处理代码 与 nordic uart 接收代码进行整合 （完成)
+3. 使用计算机模拟桑拿控制器发送 "114" DPID 室内温度数据给蓝牙板uart进行通讯模拟调试，蓝牙板接收上传数据进行了正确的解析 (完成）
+
+
+
+1. Sauna control system upload function point protocol code (done)
+2. Integrate the Tuya protocol data upload receiving processing code with the Nordic uart receiving code (done)
+3. Using a computer simulation sauna controller to send "114" DPID indoor temperature data to the Bluetooth board UART for communication simulation debugging, 
+  the Bluetooth board received and uploaded data for correct parsing (done)

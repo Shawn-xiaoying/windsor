@@ -1,0 +1,6 @@
+#ifndef PROACTIVELY_UPLOAD_DATA_MANAGEMENT_H
+#define PROACTIVELY_UPLOAD_DATA_MANAGEMENT_H
+
+void proactively_upload_change_data_to_the_app(bluetooth_connection_status_task_t *bluetooth_connection_status_task);
+
+#endif

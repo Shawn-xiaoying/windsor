@@ -1,0 +1,7 @@
+{
+    "editor.formatOnSave": true,
+    "marscode.chatLanguage": "en",
+    "files.associations": {
+        "bluetooth_connection_management.h": "c"
+    }
+}
